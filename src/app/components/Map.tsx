@@ -4,11 +4,12 @@ import {
     TileLayer,
     Marker,
     Popup,
+    useMapEvents
 } from "react-leaflet";
 // import "./LeafletMarker";
-import { useMapEvents } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
+import UserLocation from "./UserLocation";
 
 const treeIcon = new L.Icon({
     iconUrl: "/axe.png",
@@ -57,7 +58,7 @@ export default function Map() {
                     }
 
                     console.log(newReprt)
-                    setReports(prev=>[...prev,newReprt])
+                    setReports(prev => [...prev, newReprt])
                 }
             },
         });
@@ -84,7 +85,9 @@ export default function Map() {
                     <Popup>{report.title}</Popup>
                 </Marker>
             ))}
+            <UserLocation />
             <MapClick />
+
         </MapContainer>
     );
 }
