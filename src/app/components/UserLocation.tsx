@@ -30,10 +30,13 @@ function UserLocation() {
         });
     }, [map]);
 
-    if (!position) return null;
-
+    if (!position) {
+        
+        alert("Error getting location")
+        return null;
+    }
     return (
-        <Marker position={position} icon={locationIcon} >
+        <Marker position={position} icon={locationIcon} title="You are here" riseOnHover={true} >
             <Popup>You are here</Popup>
         </Marker>
     );

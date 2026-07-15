@@ -57,8 +57,22 @@ export default function Map() {
                         title: "Tree fallen"
                     }
 
-                    console.log(newReprt)
-                    setReports(prev => [...prev, newReprt])
+                    const targetLocation = L.latLng(newReprt.lat, newReprt.lng)
+
+                    const oldReport = reports.filter(loc => {
+                        const locLatLng = L.latLng(loc.lat, loc.lng);
+
+                        // Calculates actual distance in meters on the Earth's surface
+                        const distance = targetLocation.distanceTo(locLatLng);
+                        return distance <= 50  // 20 meter
+                    })
+                    if (oldReport.length > 0) {
+                        alert("Incident already reported")
+                    } else {
+                        setReports(prev => [...prev, newReprt])
+
+                    }
+                    console.log(newReprt, oldReport)
                 }
             },
         });
@@ -69,11 +83,13 @@ export default function Map() {
         <MapContainer
             center={[19.068, 73.002]}
             zoom={13}
-            style={{ height: "500px", width: "100%" }}
+            style={{ height: "300px", width: "100%" }}
         >
             <TileLayer
                 attribution='&copy; OpenStreetMap contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            //   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" //satellite
+
             />
 
             {reports.map((report) => (
@@ -82,7 +98,7 @@ export default function Map() {
                     position={[report.lat, report.lng]}
                     icon={treeIcon}
                 >
-                    <Popup>{report.title}</Popup>
+                    <Popup>{`${report.id} ${report.title}`}</Popup>
                 </Marker>
             ))}
             <UserLocation />
