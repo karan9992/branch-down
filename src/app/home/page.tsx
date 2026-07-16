@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import dynamic from "next/dynamic";
 import { Button } from '@/components/ui/button';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const Map = dynamic(() => import('@/app/components/Map'), {
     ssr: false,
@@ -50,24 +53,62 @@ const HomePage = () => {
     };
 
     return (
-        <div className='min-h-screen border flex flex-col items-center  '>
+        <div className='min-h-screen border flex flex-col items-center justify-center '>
 
-            <form className='border w-full max-w-2xl h-full flex flex-col justify-around  items-center gap-6'>
-                <h1 className='text-5xl my-4'>Report Fallen Tree</h1>
-                <div className="">
-                    <label htmlFor="">Title</label>
-                    <input type="text" name="" id="" className='border' />
-                </div>
-
-                <div className="">
-                    <label htmlFor="">Desciption</label>
-                    <input type="text" name="" id="" className='border' />
-                </div>
-
-                <Map />
+            <form className='border shadow-xl shadow-neutral-900 px-16 p-6 rounded-2xl  w-full max-w-md h-full flex flex-col justify-around  items-center gap-6'>
 
 
-                <div className="p-4 border rounded-lg max-w-sm m-4">
+                <FieldSet className='  w-full '>
+                    <FieldLegend className='text-3xl! text-center'>Report Fallen Tree</FieldLegend>
+                    {/* <FieldDescription>Please enter details</FieldDescription> */}
+                    <FieldGroup>
+                        <Field>
+                            <FieldLabel htmlFor="name">Full name</FieldLabel>
+                            <Input id="name" autoComplete="off" className='text-2xl' />
+                            {/* <FieldDescription>This appears on invoices and emails.</FieldDescription> */}
+                        </Field>
+                        <Field>
+                            <FieldLabel htmlFor="title">Title</FieldLabel>
+                            <Input id="title" autoComplete="off" />
+                            {/* <FieldError>Choose another username.</FieldError> */}
+                        </Field>
+                        <Field>
+                            <FieldLabel htmlFor="description">Description</FieldLabel>
+                            <Textarea id="description" autoComplete="off" />
+                            <FieldDescription>Describe the incident.</FieldDescription>
+                        </Field>
+                    </FieldGroup>
+
+
+
+                    {/* <FieldLegend>Address Information</FieldLegend>
+                    <FieldDescription>
+                        We need your address to deliver your order.
+                    </FieldDescription> */}
+                    <FieldGroup>
+                        <Field>
+                            <FieldLabel htmlFor="street">Street Address</FieldLabel>
+                            <Input id="street" type="text" placeholder="123 Main St" />
+                        </Field>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Field>
+                                <FieldLabel htmlFor="landmark">Landmark</FieldLabel>
+                                <Input id="landmark" type="text" placeholder="Near Petrol pump" />
+                            </Field>
+                            <Field>
+                                <FieldLabel htmlFor="zip">Postal Code</FieldLabel>
+                                <Input id="zip" type="text" placeholder="400032" />
+                            </Field>
+                        </div>
+                    </FieldGroup>
+
+                    <Map />
+                </FieldSet>
+
+
+
+
+                {/* <div className="p-4 border rounded-lg max-w-sm m-4">
                     <Button
                         onClick={handleGetLocation}
                         disabled={loading}
@@ -86,7 +127,7 @@ const HomePage = () => {
                     {error && (
                         <p className="mt-4 text-sm text-red-500">Error: {error}</p>
                     )}
-                </div>
+                </div> */}
 
 
 
