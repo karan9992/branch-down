@@ -31,8 +31,7 @@ function UserLocation() {
     }, [map]);
 
     if (!position) {
-        
-        alert("Error getting location")
+
         return null;
     }
     return (

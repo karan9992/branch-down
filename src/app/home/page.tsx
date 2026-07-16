@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Slider } from '@/components/ui/slider';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const Map = dynamic(() => import('@/app/components/Map'), {
     ssr: false,
@@ -21,6 +23,7 @@ const HomePage = () => {
     const [coords, setCoords] = useState<Coordinates | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [value, setValue] = useState<number>(0)
 
     const handleGetLocation = () => {
         // Check if the browser supports Geolocation
@@ -52,10 +55,20 @@ const HomePage = () => {
         );
     };
 
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault(); // Stop page from reloading
+
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData.entries());
+
+        console.log("Form Submitted Data:", data);
+        // You can now send 'data' to your API or backend server
+    };
+
     return (
         <div className='min-h-screen border flex flex-col items-center justify-center '>
 
-            <form className='border shadow-xl shadow-neutral-900 px-16 p-6 rounded-2xl  w-full max-w-md h-full flex flex-col justify-around  items-center gap-6'>
+            <form onSubmit={handleSubmit} className='border shadow-xl shadow-neutral-900 md:px-16 p-6 rounded-2xl  w-full max-w-lg h-full flex flex-col justify-around  items-center gap-6'>
 
 
                 <FieldSet className='  w-full '>
@@ -64,17 +77,17 @@ const HomePage = () => {
                     <FieldGroup>
                         <Field>
                             <FieldLabel htmlFor="name">Full name</FieldLabel>
-                            <Input id="name" autoComplete="off" className='text-2xl' />
+                            <Input id="name" name="name" autoComplete="off" className='text-2xl' />
                             {/* <FieldDescription>This appears on invoices and emails.</FieldDescription> */}
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="title">Title</FieldLabel>
-                            <Input id="title" autoComplete="off" />
+                            <Input id="title" name='title' autoComplete="off" />
                             {/* <FieldError>Choose another username.</FieldError> */}
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="description">Description</FieldLabel>
-                            <Textarea id="description" autoComplete="off" />
+                            <Textarea id="description" name='description' autoComplete="off" />
                             <FieldDescription>Describe the incident.</FieldDescription>
                         </Field>
                     </FieldGroup>
@@ -88,21 +101,50 @@ const HomePage = () => {
                     <FieldGroup>
                         <Field>
                             <FieldLabel htmlFor="street">Street Address</FieldLabel>
-                            <Input id="street" type="text" placeholder="123 Main St" />
+                            <Input id="street" name='address' type="text" placeholder="123 Main St" />
                         </Field>
                         <div className="grid grid-cols-2 gap-4">
                             <Field>
                                 <FieldLabel htmlFor="landmark">Landmark</FieldLabel>
-                                <Input id="landmark" type="text" placeholder="Near Petrol pump" />
+                                <Input id="landmark" name='landmark' type="text" placeholder="Near Petrol pump" />
                             </Field>
                             <Field>
                                 <FieldLabel htmlFor="zip">Postal Code</FieldLabel>
-                                <Input id="zip" type="text" placeholder="400032" />
+                                <Input id="zip" name='zip' type="text" placeholder="400032" />
                             </Field>
                         </div>
                     </FieldGroup>
 
                     <Map />
+
+                    <FieldLegend variant="label">Select Severity</FieldLegend>
+                    <FieldDescription>
+                        How severe is the condition.
+                    </FieldDescription>
+                    <RadioGroup defaultValue="low" name='severity'>
+                        <Field orientation="horizontal">
+                            <RadioGroupItem value="low" id="severity-low" />
+                            <FieldLabel htmlFor="severity-low" className="font-normal">
+                                Low
+                            </FieldLabel>
+                        </Field>
+                        <Field orientation="horizontal">
+                            <RadioGroupItem value="medium" id="severity-medium" />
+                            <FieldLabel htmlFor="severity-medium" className="font-normal">
+                                Medium
+                            </FieldLabel>
+                        </Field>
+                        <Field orientation="horizontal">
+                            <RadioGroupItem value="high" id="severity-high" />
+                            <FieldLabel htmlFor="severity-high" className="font-normal">
+                                High
+                            </FieldLabel>
+                        </Field>
+                    </RadioGroup>
+
+
+                    <Button type='submit' className='text-xl! p-2 my-4'>Submit</Button>
+
                 </FieldSet>
 
 
@@ -137,7 +179,7 @@ const HomePage = () => {
 
 
 
-        </div>
+        </div >
     )
 }
 

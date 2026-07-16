@@ -83,7 +83,7 @@ export default function Map() {
         <MapContainer
             center={[19.068, 73.002]}
             zoom={13}
-            style={{ height: "300px", width: "100%" }}
+            style={{ height: "200px", width: "100%" }}
         >
             <TileLayer
                 attribution='&copy; OpenStreetMap contributors'
