@@ -7,9 +7,9 @@ import {
     useMapEvents
 } from "react-leaflet";
 // import "./LeafletMarker";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import L from "leaflet";
-import UserLocation from "./UserLocation";
+import UserLocation, { type MapPosition } from "./UserLocation";
 
 const treeIcon = new L.Icon({
     iconUrl: "/axe.png",
@@ -18,8 +18,38 @@ const treeIcon = new L.Icon({
 
 });
 
-export default function Map() {
+const locationIcon = new L.Icon({
+    iconUrl: "/location-pin.png",
+    iconSize: [42, 42],
+    iconAnchor: [21, 42],
+});
 
+
+function getAddress(lat: number, lon: number) {
+
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+
+    fetch(url, {
+        headers: {
+            'User-Agent': 'BranchDown/1.0' // OpenStreetMap requires a custom User-Agent header
+        }
+    }).then(res => res.json())
+        .then(data => {
+            if (data.display_name) {
+                console.log("Full Address:", data.display_name);
+                return data.display_name;
+            } else {
+                console.log("No address found.");
+            }
+        })
+        .catch(err => console.log(err))
+
+
+
+}
+
+export default function Map() {
+    const [position, setPosition] = useState<MapPosition | null>(null);
     const [reports, setReports] = useState([
         {
 
@@ -40,7 +70,13 @@ export default function Map() {
             lng: 72.88,
             title: "Road Blocked",
         },
+
+
     ])
+
+    const handlePositionChange = useCallback((newPosition: MapPosition) => {
+        setPosition(newPosition);
+    }, []);
 
 
     function MapClick() {
@@ -101,7 +137,12 @@ export default function Map() {
                     <Popup>{`${report.id} ${report.title}`}</Popup>
                 </Marker>
             ))}
-            <UserLocation />
+            {position && (
+                <Marker position={position} icon={locationIcon} title="You are here" riseOnHover>
+                    <Popup>You are here</Popup>
+                </Marker>
+            )}
+            <UserLocation onPositionChange={handlePositionChange} />
             <MapClick />
 
         </MapContainer>

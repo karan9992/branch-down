@@ -1,44 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Marker, Popup, useMap } from "react-leaflet";
-import locationPin from "location-pin.png"
-import L from "leaflet"
-function UserLocation() {
-    const [position, setPosition] = useState<[number, number] | null>(null);
+import { useContext, useEffect } from "react";
+import { useMap } from "react-leaflet";
+import { LocationContext } from "@/app/home/page"
+
+export type MapPosition = [number, number];
+
+interface UserLocationProps {
+    onPositionChange: (position: MapPosition) => void;
+}
+
+function UserLocation({ onPositionChange }: UserLocationProps) {
     const map = useMap();
-
-
-
-
-    const locationIcon = new L.Icon({
-        iconUrl: "/location-pin.png",
-        iconSize: [42, 42],
-        iconAnchor: [21, 42],
-
-    });
-
+    const loc = useContext(LocationContext);
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((pos) => {
-            const coords: [number, number] = [
+            const coords: MapPosition = [
                 pos.coords.latitude,
                 pos.coords.longitude,
             ];
 
-            setPosition(coords);
+            onPositionChange(coords);
             map.flyTo(coords, 16);
+            console.log(coords)
+            loc?.setCoords(pos.coords)
+           
         });
-    }, [map]);
+    }, [map, onPositionChange]);
 
-    if (!position) {
-
-        return null;
-    }
-    return (
-        <Marker position={position} icon={locationIcon} title="You are here" riseOnHover={true} >
-            <Popup>You are here</Popup>
-        </Marker>
-    );
+    return null;
 }
+
 
 export default UserLocation;
