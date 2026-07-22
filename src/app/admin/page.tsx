@@ -2,67 +2,81 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { IReport } from "@/types/report"
 
+// const reports = [
+//     {
+//         id: 1,
+//         name: "Karan Bhoir",
+//         title: "tree fallen",
+//         description: "sdfffsfdsfsf",
+//         address: "sector 29, Vashi",
+//         landmark: "signal",
+//         zip: 400703,
+//         severity: "medium",
+//         latitude: 19.1135,
+//         longitude: 72.8664,
+//         status: "pending"
+//     },
+//     {
+//         id: 2,
+//         name: "Rohan Patel",
+//         title: "pole fallen",
+//         description: "sdfffsfdsfsf",
+//         address: "sector 29, Panvel",
+//         landmark: "signal",
+//         zip: 400531,
+//         severity: "high",
+//         latitude: 18.1135,
+//         longitude: 68.8664,
+//         status: "pending"
 
-const reports = [
-    {
-        id: 1,
-        name: "Karan Bhoir",
-        title: "tree fallen",
-        description: "sdfffsfdsfsf",
-        address: "sector 29, Vashi",
-        landmark: "signal",
-        zip: 400703,
-        severity: "medium",
-        latitude: 19.1135,
-        longitude: 72.8664,
-        status: "pending"
-    },
-    {
-        id: 2,
-        name: "Rohan Patel",
-        title: "pole fallen",
-        description: "sdfffsfdsfsf",
-        address: "sector 29, Panvel",
-        landmark: "signal",
-        zip: 400531,
-        severity: "high",
-        latitude: 18.1135,
-        longitude: 68.8664,
-        status: "pending"
+//     },
+//     {
+//         id: 3,
+//         name: "Darshan K",
+//         title: "pole fallen",
+//         description: "sdfffsfdsfsf",
+//         address: "sector 29, Panvel",
+//         landmark: "signal",
+//         zip: 400531,
+//         severity: "low",
+//         latitude: 32.1135,
+//         longitude: 64.8664,
+//         status: "completed"
 
-    },
-    {
-        id: 3,
-        name: "Darshan K",
-        title: "pole fallen",
-        description: "sdfffsfdsfsf",
-        address: "sector 29, Panvel",
-        landmark: "signal",
-        zip: 400531,
-        severity: "low",
-        latitude: 32.1135,
-        longitude: 64.8664,
-        status: "completed"
+//     },
+//     {
+//         id: 4,
+//         name: "Shubham K",
+//         title: "tree fallen",
+//         description: "sdfffsfdsfsf",
+//         address: "sector 29, Bandra",
+//         landmark: "signal",
+//         zip: 400531,
+//         severity: "high",
+//         latitude: 18.1135,
+//         longitude: 68.8664,
+//         status: "pending"
 
-    },
-    {
-        id: 4,
-        name: "Shubham K",
-        title: "tree fallen",
-        description: "sdfffsfdsfsf",
-        address: "sector 29, Bandra",
-        landmark: "signal",
-        zip: 400531,
-        severity: "high",
-        latitude: 18.1135,
-        longitude: 68.8664,
-        status: "pending"
-
-    }
-]
+//     }
+// ]
 const AdminPage = () => {
+
+    const [reports, setReports] = useState<IReport[]>([])
+
+    useEffect(() => {
+        fetch("/api/report")
+            .then(res => res.json())
+            .then(data => {
+                setReports(data)
+                console.log(data)
+            }).catch(err => console.log("error:", err))
+
+
+    }, [])
+
     return (
         <div className='min-h-screen flex  justify-center border ' >
             <div className=" flex-1 w-full max-w-6xl p-2 h-screen overflow-auto flex flex-col ">
@@ -83,11 +97,11 @@ const AdminPage = () => {
 
 
                 <div className="  mt-6 text-2xl ">
-                    <Table className='text-xl' border={2}>
+                    <Table className='text-lg' border={2}>
                         <TableCaption>Incident Reports</TableCaption>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-25">ID</TableHead>
+                                {/* <TableHead className="w-25">ID</TableHead> */}
                                 <TableHead>Name</TableHead>
                                 <TableHead>Title</TableHead>
                                 <TableHead>Description</TableHead>
@@ -102,12 +116,12 @@ const AdminPage = () => {
                         <TableBody>
 
                             {
-                                reports.map(r => <TableRow key={r.id}>
-                                    <TableCell>{r.id}</TableCell>
+                                reports?.map(r => <TableRow key={r._id}>
+                                    {/* <TableCell>{r._id}</TableCell> */}
                                     <TableCell>{r.name}</TableCell>
                                     <TableCell className="font-semibold">{r.title}</TableCell>
                                     <TableCell>{r.description}</TableCell>
-                                    <TableCell>{r.address}</TableCell>
+                                    <TableCell>{r.location.address}</TableCell>
                                     {/* <TableCell>{r.landmark}</TableCell>
                                     <TableCell>{r.zip}</TableCell> */}
                                     <TableCell>

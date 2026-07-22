@@ -38,7 +38,7 @@ const reportSchema = z.object({
 
     description: z
         .string().nullish(),
-        
+
 
     address: z
         .string()
@@ -51,10 +51,10 @@ const reportSchema = z.object({
     zip: z.coerce
         .number()
         .min(10000),
-    // latitude: z.string(),
-    // longitude: z.string(),
+    latitude: z.string(),
+    longitude: z.string(),
 
-    severity: z.enum(["low", "medium", "high"])
+    severity: z.enum(["LOW", "MEDIUM", "HIGH"])
 
 });
 
@@ -74,6 +74,7 @@ const HomePage = () => {
 
     useEffect(() => {
         console.log("Loc :", coords)
+        // handleGetLocation()
     }, [coords])
 
 
@@ -115,7 +116,7 @@ const HomePage = () => {
 
         const formData = new FormData(e.currentTarget);
 
-        // Optional coords logic from your previous snippet
+
         if (typeof coords !== "undefined" && coords) {
             formData.append("latitude", coords.latitude.toFixed(4).toString());
             formData.append("longitude", coords.longitude.toFixed(4).toString());
@@ -135,13 +136,23 @@ const HomePage = () => {
                     formattedErrors[key as keyof FormErrors] = fieldErrors[key as keyof typeof fieldErrors]![0];
                 }
             }
-
             setErrors(formattedErrors);
             return;
         }
 
         // Success path
         console.log("Validated Form Data:", result.data);
+
+         fetch("/api/report", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(result.data),
+        }).then(res=>res.json()).then(data=>console.log(data))
+        .catch(err=>console.log("Error :",err));
+
+        
     };
 
 
@@ -222,6 +233,7 @@ const HomePage = () => {
                             <Input id="img" name='img' type="file" />
                         </Field>
 
+                        <Map />
                         <FieldDescription className='text-green-500'>
                             Check if location is marked correctly.
                         </FieldDescription>
@@ -230,17 +242,17 @@ const HomePage = () => {
                         <Field >
                             <FieldLegend variant="label">Select Severity <span className="text-destructive">*</span></FieldLegend>
                             <FieldDescription>How severe is the condition.</FieldDescription>
-                            <RadioGroup defaultValue="low" name='severity'>
+                            <RadioGroup defaultValue="LOW" name='severity'>
                                 <Field orientation="horizontal">
-                                    <RadioGroupItem value="low" id="severity-low" />
+                                    <RadioGroupItem value="LOW" id="severity-low" />
                                     <FieldLabel htmlFor="severity-low" className="font-normal">Low</FieldLabel>
                                 </Field>
                                 <Field orientation="horizontal">
-                                    <RadioGroupItem value="medium" id="severity-medium" />
+                                    <RadioGroupItem value="MEDIUM" id="severity-medium" />
                                     <FieldLabel htmlFor="severity-medium" className="font-normal">Medium</FieldLabel>
                                 </Field>
                                 <Field orientation="horizontal">
-                                    <RadioGroupItem value="high" id="severity-high" />
+                                    <RadioGroupItem value="HIGH" id="severity-high" />
                                     <FieldLabel htmlFor="severity-high" className="font-normal">High</FieldLabel>
                                 </Field>
                             </RadioGroup>

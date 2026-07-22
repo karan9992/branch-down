@@ -2,11 +2,12 @@ import mongoose, { Schema, model, models } from "mongoose";
 
 const ReportSchema = new Schema(
     {
+        name: String,
         title: String,
 
         description: String,
 
-        images: [String],
+        // images: [String],
 
         location: {
             type: {
@@ -41,11 +42,11 @@ const ReportSchema = new Schema(
             default: "PENDING",
         },
 
-        reportedBy: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
+        // reportedBy: {
+        //     type: Schema.Types.ObjectId,
+        //     ref: "User",
+        //     required: true,
+        // },
     },
     {
         timestamps: true,

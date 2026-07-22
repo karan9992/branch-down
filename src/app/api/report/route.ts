@@ -16,34 +16,79 @@ export async function POST(req: NextRequest) {
         await connectDB();
 
         const {
+            name,
             title,
             description,
             severity,
-            images,
-            location,
+            address,
+            landmark,
+            zip,
+            latitude,
+            longitude
         } = await req.json();
 
-        const report = await Report.create({
-            title,
-            description,
-            severity,
-            images,
-            location,
-        });
+        const location = {
+            type: "Point",
+            coordinates: [longitude, latitude],
+            address: `${address} ${zip} Landmark : ${landmark}`,
+        }
 
-        return NextResponse.json(
-            {
-                success: true,
-                message: "Report submitted successfully.",
-                data: report,
+        const existing = await Report.findOne({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [longitude, latitude],
+                    },
+                    $maxDistance: 30,
+                },
             },
-            { status: 201 }
-        );
+        });
+        console.log("Existing :", existing)
+
+        if (!existing) {
+
+            const report = await Report.create({
+                name,
+                title,
+                description,
+                severity,
+                location,
+            });
+
+            return NextResponse.json(
+                {
+                    success: true,
+                    message: "Report submitted successfully.",
+                    data: report,
+                },
+                { status: 201 }
+            );
+
+        }else{
+
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Report already reported.",
+                    data: existing,
+                },
+                { status: 409 }
+            );
+        }
+
+
+
+
+
+
     } catch (error) {
+        console.log("Error :", error)
         return NextResponse.json(
             {
                 success: false,
                 message: "Failed to create report.",
+                error
             },
             { status: 500 }
         );
