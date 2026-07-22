@@ -62,9 +62,20 @@ import { IReport } from "@/types/report"
 
 //     }
 // ]
+
+type TMetric = {
+    total: number,
+    resolved: number,
+    pending: number,
+}
 const AdminPage = () => {
 
     const [reports, setReports] = useState<IReport[]>([])
+    const [metrics, setMetrics] = useState<TMetric>({
+        total: 0,
+        resolved: 0,
+        pending: 0,
+    })
 
     useEffect(() => {
         fetch("/api/report")
@@ -73,9 +84,26 @@ const AdminPage = () => {
                 setReports(data)
                 console.log(data)
             }).catch(err => console.log("error:", err))
-
-
     }, [])
+
+    useEffect(() => {
+        let pending = 0;
+        let resolved = 0;
+
+        reports.forEach((report) => {
+            if (report.status === "PENDING") {
+                pending++;
+            } else if (report.status === "RESOLVED") {
+                resolved++;
+            }
+        });
+
+        setMetrics({
+            pending,
+            resolved,
+            total: reports.length,
+        });
+    }, [reports]);
 
     return (
         <div className='min-h-screen flex  justify-center border ' >
@@ -85,9 +113,9 @@ const AdminPage = () => {
                 <h1 className='text-2xl text-center'>Reports</h1>
 
                 <div className="border flex gap-2 my-8 flex-row-reverse">
-                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Pending :23 </div>
-                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Completed :57 </div>
-                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Incidents 159</div>
+                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Pending :{metrics.pending} </div>
+                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Completed :{metrics.resolved} </div>
+                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Incidents : {metrics.total}</div>
 
                 </div>
 
@@ -135,7 +163,7 @@ const AdminPage = () => {
                                             <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-8">...<span className="sr-only">Open menu</span></Button>} />
                                             <DropdownMenuContent align="end">
 
-                                                <DropdownMenuItem onClick={() => console.log("Completed", r.id)}>Completed</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => console.log("Completed", r._id)}>Completed</DropdownMenuItem>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem variant="destructive" onClick={() => console.log("Pending")}>
                                                     Pending
