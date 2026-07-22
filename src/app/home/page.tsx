@@ -33,13 +33,12 @@ const reportSchema = z.object({
 
     title: z
         .string()
-        .min(5, "Report title must be at least 5 characters.")
+        .min(3, "Report title must be at least 3 characters.")
         .max(32, "Report title must be at most 32 characters."),
 
     description: z
-        .string()
-        .min(10, "Description must be at least 10 characters.")
-        .max(100, "Description must be at most 100 characters."),
+        .string().nullish(),
+        
 
     address: z
         .string()
@@ -52,6 +51,8 @@ const reportSchema = z.object({
     zip: z.coerce
         .number()
         .min(10000),
+    // latitude: z.string(),
+    // longitude: z.string(),
 
     severity: z.enum(["low", "medium", "high"])
 

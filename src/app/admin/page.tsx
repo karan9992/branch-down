@@ -1,3 +1,7 @@
+'use client'
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import React from 'react'
 
 
@@ -12,7 +16,8 @@ const reports = [
         zip: 400703,
         severity: "medium",
         latitude: 19.1135,
-        longitude: 72.8664
+        longitude: 72.8664,
+        status: "pending"
     },
     {
         id: 2,
@@ -24,7 +29,9 @@ const reports = [
         zip: 400531,
         severity: "high",
         latitude: 18.1135,
-        longitude: 68.8664
+        longitude: 68.8664,
+        status: "pending"
+
     },
     {
         id: 3,
@@ -36,7 +43,9 @@ const reports = [
         zip: 400531,
         severity: "low",
         latitude: 32.1135,
-        longitude: 64.8664
+        longitude: 64.8664,
+        status: "completed"
+
     },
     {
         id: 4,
@@ -48,24 +57,84 @@ const reports = [
         zip: 400531,
         severity: "high",
         latitude: 18.1135,
-        longitude: 68.8664
+        longitude: 68.8664,
+        status: "pending"
+
     }
 ]
 const AdminPage = () => {
     return (
-        <div className='min-h-screen flex border-neutral-50 border' >
-            <div className="border border-white w-1/5 h-screen "> sidebar</div>
-            <div className="border border-white flex-1  p-2 h-screen overflow-auto flex flex-col ">
+        <div className='min-h-screen flex  justify-center border ' >
+            <div className=" flex-1 w-full max-w-6xl p-2 h-screen overflow-auto flex flex-col ">
+
+
                 <h1 className='text-2xl text-center'>Reports</h1>
 
-                <div className="border border-white mt-6 text-2xl ">
-                    <ul>
-                        {
-                            reports.map(r => <li key={r.id}>
-                                <p> <span>{r.id}</span> &nbsp; <span>{r.title}</span> &nbsp; <span>{r.address}</span></p>
-                            </li>)
-                        }
-                    </ul>
+                <div className="border flex gap-2 my-8 flex-row-reverse">
+                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Pending :23 </div>
+                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Completed :57 </div>
+                    <div className="border border-neutral-500 p-2 px-4  text-2xl">Incidents 159</div>
+
+                </div>
+
+
+
+
+
+
+                <div className="  mt-6 text-2xl ">
+                    <Table className='text-xl' border={2}>
+                        <TableCaption>Incident Reports</TableCaption>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-25">ID</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Title</TableHead>
+                                <TableHead>Description</TableHead>
+                                <TableHead className="">Address</TableHead>
+                                <TableHead>Severity</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Actions</TableHead>
+
+
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+
+                            {
+                                reports.map(r => <TableRow key={r.id}>
+                                    <TableCell>{r.id}</TableCell>
+                                    <TableCell>{r.name}</TableCell>
+                                    <TableCell className="font-semibold">{r.title}</TableCell>
+                                    <TableCell>{r.description}</TableCell>
+                                    <TableCell>{r.address}</TableCell>
+                                    {/* <TableCell>{r.landmark}</TableCell>
+                                    <TableCell>{r.zip}</TableCell> */}
+                                    <TableCell>
+                                        <span className={`badge-${r.severity}`}>
+                                            {r.severity}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell>{r.status}</TableCell>
+                                    <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-8">...<span className="sr-only">Open menu</span></Button>} />
+                                            <DropdownMenuContent align="end">
+
+                                                <DropdownMenuItem onClick={() => console.log("Completed", r.id)}>Completed</DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem variant="destructive" onClick={() => console.log("Pending")}>
+                                                    Pending
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+
+                                </TableRow>)
+                            }
+
+                        </TableBody>
+                    </Table>
                 </div>
 
             </div>
