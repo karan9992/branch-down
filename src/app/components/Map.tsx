@@ -48,7 +48,7 @@ function getAddress(lat: number, lon: number) {
 
 }
 
-export default function Map() {
+export default function Map({height ='200px'}:{height?:string}) {
     const [position, setPosition] = useState<MapPosition | null>(null);
     const [reports, setReports] = useState([
         {
@@ -119,7 +119,7 @@ export default function Map() {
         <MapContainer
             center={[19.068, 73.002]}
             zoom={13}
-            style={{ height: "200px", width: "100%" }}
+            style={{ height: height, width: "100%" }}
         >
             <TileLayer
                 attribution='&copy; OpenStreetMap contributors'

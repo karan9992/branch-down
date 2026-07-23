@@ -9,6 +9,7 @@ import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import * as z from 'zod'
 import { Landmark } from 'lucide-react';
+import { toast } from 'sonner';
 const Map = dynamic(() => import('@/app/components/Map'), {
     ssr: false,
 });
@@ -143,16 +144,27 @@ const HomePage = () => {
         // Success path
         console.log("Validated Form Data:", result.data);
 
-         fetch("/api/report", {
+        fetch("/api/report", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(result.data),
-        }).then(res=>res.json()).then(data=>console.log(data))
-        .catch(err=>console.log("Error :",err));
+        }).then(res => res.json()).then(data => {
+            console.log(data)
+            if (data.success) {
+                toast.success(data.message, {
+                    position: "top-right"
+                })
+            } else {
+                toast.warning(data.message, {
+                    position: "top-right"
+                })
+            }
+        })
+            .catch(err => console.log("Error :", err));
 
-        
+
     };
 
 
