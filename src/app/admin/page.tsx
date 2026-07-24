@@ -244,7 +244,7 @@ const AdminPage = () => {
                 </section>
 
                 <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900 p-2 shadow-xl shadow-black/20">
-                    <ReportMap height="500px" reportData={reports} />
+                    <ReportMap height="500px" reportData={reports} highlight={highlightIncident} />
                 </section>
             </div>
         </main>
