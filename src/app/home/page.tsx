@@ -115,7 +115,8 @@ const HomePage = () => {
         e.preventDefault();
         setErrors({}); // Reset error state on new submit
 
-        const formData = new FormData(e.currentTarget);
+        const form = e.currentTarget;
+        const formData = new FormData(form);
 
 
         if (typeof coords !== "undefined" && coords) {
@@ -156,6 +157,7 @@ const HomePage = () => {
                 toast.success(data.message, {
                     position: "top-right"
                 })
+                form.reset();
             } else {
                 toast.warning(data.message, {
                     position: "top-right"

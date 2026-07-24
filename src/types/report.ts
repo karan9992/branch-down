@@ -8,7 +8,7 @@ export interface IReport {
     images?: string[];
     location: {
         type: "Point";
-        coordinates: [number, number];
+        coordinates: [number, number];  //[long , lat]
         address: string;
     };
     //   reportedBy: string;
