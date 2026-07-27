@@ -213,14 +213,30 @@ const AdminPage = () => {
                                                 className="border border-neutral-700 bg-neutral-900 text-neutral-100 shadow-xl shadow-black/30"
                                             >
                                                 <DropdownMenuItem
+                                                    disabled={report.status === "RESOLVED"}
                                                     className="focus:bg-neutral-800 focus:text-white"
-                                                    onClick={() => console.log("Resolved", report._id)}
+                                                    onClick={() =>
+                                                        fetch("/api/report", {
+                                                            method: "PATCH",
+                                                            headers: { "Content-Type": "application/json" },
+                                                            body: JSON.stringify({ id: report._id, status: "RESOLVED" }),
+                                                        }).then(res => res.json())
+                                                            .then(data => setReports(data.allReports))
+                                                    }
                                                 >
                                                     Mark as resolved
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
+                                                    disabled={report.status === "PENDING"}
                                                     className="focus:bg-neutral-800 focus:text-white"
-                                                    onClick={() => console.log("Pending", report._id)}
+                                                    onClick={() =>
+                                                        fetch("/api/report", {
+                                                            method: "PATCH",
+                                                            headers: { "Content-Type": "application/json" },
+                                                            body: JSON.stringify({ id: report._id, status: "PENDING" }),
+                                                        }).then(res => res.json())
+                                                            .then(data => setReports(data.allReports))
+                                                    }
                                                 >
                                                     Mark as pending
                                                 </DropdownMenuItem>

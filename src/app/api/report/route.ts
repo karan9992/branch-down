@@ -10,6 +10,33 @@ export async function GET() {
     return Response.json(reports);
 }
 
+export async function PATCH(req: NextRequest) {
+    await connectDB();
+
+    const { id, status } = await req.json();
+
+    const report = await Report.findByIdAndUpdate(
+        id,
+        { $set: { status } },
+        { new: true, runValidators: true },
+    );
+
+    if (!report) {
+        return NextResponse.json(
+            { success: false, message: "Report not found." },
+            { status: 404 },
+        );
+    }
+
+    const allReports = await Report.find()
+    return NextResponse.json({
+        success: true,
+        message: "Report updated.",
+        data: report,
+        allReports
+    });
+}
+
 export async function POST(req: NextRequest) {
 
     try {
@@ -65,7 +92,7 @@ export async function POST(req: NextRequest) {
                 { status: 201 }
             );
 
-        }else{
+        } else {
 
             return NextResponse.json(
                 {
