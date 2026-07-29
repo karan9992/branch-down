@@ -1,6 +1,7 @@
 'use client'
 import React, { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react'
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -8,8 +9,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import * as z from 'zod'
-import { Landmark } from 'lucide-react';
+import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
+
+
+import { CldUploadButton } from 'next-cloudinary';
 const Map = dynamic(() => import('@/app/components/Map'), {
     ssr: false,
 });
@@ -55,7 +59,8 @@ const reportSchema = z.object({
     latitude: z.string(),
     longitude: z.string(),
 
-    severity: z.enum(["LOW", "MEDIUM", "HIGH"])
+    severity: z.enum(["LOW", "MEDIUM", "HIGH"]),
+    images: z.array(z.string().url()).min(1, "Upload at least one image."),
 
 });
 
@@ -72,6 +77,7 @@ const HomePage = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [value, setValue] = useState<number>(0)
     const [errors, setErrors] = useState<FormErrors>({})
+    const [imageUrls, setImageUrls] = useState<string[]>([])
 
     useEffect(() => {
         console.log("Loc :", coords)
@@ -116,6 +122,7 @@ const HomePage = () => {
         setErrors({}); // Reset error state on new submit
 
         const form = e.currentTarget;
+
         const formData = new FormData(form);
 
 
@@ -124,7 +131,11 @@ const HomePage = () => {
             formData.append("longitude", coords.longitude.toFixed(4).toString());
         }
 
-        const rawData = Object.fromEntries(formData.entries());
+        const rawData = {
+            ...Object.fromEntries(formData.entries()),
+            images: imageUrls,
+        };
+        console.log("Raw data:", rawData)
         const result = reportSchema.safeParse(rawData);
         console.log("res :", result)
 
@@ -158,6 +169,7 @@ const HomePage = () => {
                     position: "top-right"
                 })
                 form.reset();
+                setImageUrls([]);
             } else {
                 toast.warning(data.message, {
                     position: "top-right"
@@ -244,8 +256,52 @@ const HomePage = () => {
                         {/* --- Image Field --- */}
                         <Field>
                             <FieldLabel htmlFor="img">Upload Image <span className="text-destructive">*</span></FieldLabel>
-                            <Input id="img" name='img' type="file" />
+                            <CldUploadButton
+                                uploadPreset="tree_reports"
+                                options={{ multiple: true, maxFiles: 3, resourceType: "image" }}
+                                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                                onSuccess={(result) => {
+                                    const uploadedImage = result.info;
+
+                                    if (typeof uploadedImage === "string" || !uploadedImage) return;
+
+                                    const imageUrl = uploadedImage.secure_url;
+
+                                    setImageUrls((currentImages) =>
+                                        currentImages.includes(imageUrl)
+                                            ? currentImages
+                                            : [...currentImages, imageUrl],
+                                    );
+                                }}
+                                onError={() => toast.error("Image upload failed. Please try again.")}
+                            >
+                                <ImagePlus className="size-4" />
+                                Upload images
+                            </CldUploadButton>
+                            <FieldDescription>Upload up to 3 images of the incident.</FieldDescription>
+                            {errors.images && <FieldError className="text-destructive text-sm mt-1">{errors.images}</FieldError>}
+                            {imageUrls.length > 0 && (
+                                <div className="grid grid-cols-3 gap-3">
+                                    {imageUrls.map((imageUrl) => (
+                                        <div key={imageUrl} className="group relative aspect-square overflow-hidden rounded-md border">
+                                            <Image src={imageUrl} alt="Uploaded incident" fill className="object-cover" />
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="icon"
+                                                className="absolute top-1 right-1 size-7 opacity-0 transition-opacity group-hover:opacity-100"
+                                                onClick={() => setImageUrls((currentImages) => currentImages.filter((url) => url !== imageUrl))}
+                                            >
+                                                <X className="size-4" />
+                                                <span className="sr-only">Remove image</span>
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </Field>
+
+
 
                         <Map />
                         <FieldDescription className='text-green-500'>
