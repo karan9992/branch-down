@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import * as z from 'zod'
-import { ImagePlus, X } from 'lucide-react';
+import { ArrowLeft, ImagePlus, MapPin, ShieldCheck, X } from 'lucide-react';
+import Link from 'next/link';
 import { toast } from 'sonner';
 
 
@@ -150,6 +150,9 @@ const HomePage = () => {
                 }
             }
             setErrors(formattedErrors);
+            toast.error("Please complete all required fields before submitting.", {
+                position: "top-right",
+            });
             return;
         }
 
@@ -183,46 +186,41 @@ const HomePage = () => {
 
 
 
-    // const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
-    //     e.preventDefault();
-    //     const formData = new FormData(e.currentTarget);
-    //     if (coords) {
-    //         formData.append("latitude", coords.latitude.toFixed(4).toString());
-    //         formData.append("longitude", coords.longitude.toFixed(4).toString());
-    //     }
-    //     const data = Object.fromEntries(formData.entries());
-
-    //     console.log("Form Submitted Data:", data);
-
-    // };
+   
 
     return (
         <LocationContext.Provider value={{ coords, setCoords }}>
-            <div className='min-h-screen border flex flex-col items-center justify-center '>
+            <div className='min-h-screen px-4 py-6 sm:px-6 sm:py-10'>
+                <div className='mx-auto w-full max-w-5xl'>
+                    <Link href="/" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-neutral-400 transition hover:text-emerald-200"><ArrowLeft className="size-4" /> Back to home</Link>
+                    <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+                        <div><p className="text-sm font-medium text-emerald-300">Community tree care</p><h1 className="mt-1 text-3xl font-semibold tracking-tight text-white sm:text-4xl">Report a fallen tree</h1><p className="mt-2 max-w-xl text-sm leading-6 text-neutral-400">Your report helps local teams identify hazards and plan the fastest response.</p></div>
+                        <div className="hidden items-center gap-2 rounded-xl border border-emerald-300/10 bg-emerald-300/5 px-3 py-2 text-xs text-emerald-100 sm:flex"><ShieldCheck className="size-4 text-emerald-300" /> Details are used only for this report</div>
+                    </div>
 
-                <form onSubmit={handleSubmit} className='border shadow-xl shadow-neutral-900 md:px-16 p-6 rounded-2xl w-full max-w-lg h-full flex flex-col justify-around items-center gap-6'>
+                <form onSubmit={handleSubmit} className='rounded-3xl border border-white/10 bg-neutral-900/75 p-5 shadow-2xl shadow-black/30 backdrop-blur sm:p-8 md:p-10'>
                     <FieldSet className='w-full'>
-                        <FieldLegend className='text-3xl! text-center'>Report Fallen Tree</FieldLegend>
+                        <FieldLegend className='sr-only'>Report fallen tree</FieldLegend>
 
                         <FieldGroup>
                             {/* --- Name Field --- */}
                             <Field >
                                 <FieldLabel htmlFor="name">Full Name <span className="text-destructive">*</span></FieldLabel>
-                                <Input id="name" name="name" autoComplete="off" className='text-2xl' />
+                                <Input id="name" name="name" autoComplete="name" placeholder="Your full name" className='h-11 bg-white/5' />
                                 {errors.name && <FieldError className="text-destructive text-sm mt-1">{errors.name}</FieldError>}
                             </Field>
 
                             {/* --- Title Field --- */}
                             <Field >
                                 <FieldLabel htmlFor="title">Title <span className="text-destructive">*</span></FieldLabel>
-                                <Input id="title" name='title' autoComplete="off" />
+                                <Input id="title" name='title' autoComplete="off" placeholder="e.g. Large tree blocking the road" className='h-11 bg-white/5' />
                                 {errors.title && <FieldError className="text-destructive text-sm mt-1">{errors.title}</FieldError>}
                             </Field>
 
                             {/* --- Description Field --- */}
                             <Field >
                                 <FieldLabel htmlFor="description">Description <span className="text-destructive">*</span></FieldLabel>
-                                <Textarea id="description" name='description' autoComplete="off" />
+                                <Textarea id="description" name='description' autoComplete="off" placeholder="Include any immediate hazards or access issues." className='min-h-28 bg-white/5' />
                                 <FieldDescription>Describe the incident.</FieldDescription>
                                 {errors.description && <FieldError className="text-destructive text-sm mt-1">{errors.description}</FieldError>}
                             </Field>
@@ -232,22 +230,22 @@ const HomePage = () => {
                             {/* --- Address Field --- */}
                             <Field >
                                 <FieldLabel htmlFor="street">Street Address<span className="text-destructive">*</span></FieldLabel>
-                                <Input id="street" name='address' type="text" placeholder="123 Main St" />
+                                <Input id="street" name='address' type="text" placeholder="123 Main St" className='h-11 bg-white/5' />
                                 {errors.address && <FieldError className="text-destructive text-sm mt-1">{errors.address}</FieldError>}
                             </Field>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-4 sm:grid-cols-2">
                                 {/* --- Landmark Field --- */}
                                 <Field >
                                     <FieldLabel htmlFor="landmark">Landmark<span className="text-destructive">*</span></FieldLabel>
-                                    <Input id="landmark" name='landmark' type="text" placeholder="Near Petrol pump" />
+                                    <Input id="landmark" name='landmark' type="text" placeholder="Near petrol pump" className='h-11 bg-white/5' />
                                     {errors.landmark && <FieldError className="text-destructive text-sm mt-1">{errors.landmark}</FieldError>}
                                 </Field>
 
                                 {/* --- Zip Code Field --- */}
                                 <Field >
                                     <FieldLabel htmlFor="zip">Postal Code<span className="text-destructive">*</span> </FieldLabel>
-                                    <Input id="zip" name='zip' type="text" placeholder="400032" />
+                                    <Input id="zip" name='zip' type="text" inputMode="numeric" placeholder="400032" className='h-11 bg-white/5' />
                                     {errors.zip && <FieldError className="text-destructive text-sm mt-1">{errors.zip}</FieldError>}
                                 </Field>
                             </div>
@@ -259,7 +257,7 @@ const HomePage = () => {
                             <CldUploadButton
                                 uploadPreset="tree_reports"
                                 options={{ multiple: true, maxFiles: 3, resourceType: "image" }}
-                                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-emerald-300/25 bg-emerald-300/10 px-4 py-2 text-sm font-semibold text-emerald-100 transition-colors hover:bg-emerald-300/15 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                                 onSuccess={(result) => {
                                     const uploadedImage = result.info;
 
@@ -303,25 +301,27 @@ const HomePage = () => {
 
 
 
-                        <Map />
-                        <FieldDescription className='text-green-500'>
-                            Check if location is marked correctly.
+                        <div className="overflow-hidden rounded border border-white/10">
+                            <Map height="260px" />
+                        </div>
+                        <FieldDescription className='flex items-center gap-2 text-emerald-300'>
+                            <MapPin className="size-4" /> Check that the location marker is correct.
                         </FieldDescription>
 
                         {/* --- Severity Field --- */}
                         <Field >
                             <FieldLegend variant="label">Select Severity <span className="text-destructive">*</span></FieldLegend>
                             <FieldDescription>How severe is the condition.</FieldDescription>
-                            <RadioGroup defaultValue="LOW" name='severity'>
-                                <Field orientation="horizontal">
+                            <RadioGroup defaultValue="LOW" name='severity' className="grid gap-2 sm:grid-cols-3">
+                                <Field orientation="horizontal" className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 px-3 py-2.5">
                                     <RadioGroupItem value="LOW" id="severity-low" />
                                     <FieldLabel htmlFor="severity-low" className="font-normal">Low</FieldLabel>
                                 </Field>
-                                <Field orientation="horizontal">
+                                <Field orientation="horizontal" className="rounded-xl border border-amber-400/20 bg-amber-400/5 px-3 py-2.5">
                                     <RadioGroupItem value="MEDIUM" id="severity-medium" />
                                     <FieldLabel htmlFor="severity-medium" className="font-normal">Medium</FieldLabel>
                                 </Field>
-                                <Field orientation="horizontal">
+                                <Field orientation="horizontal" className="rounded-xl border border-rose-400/20 bg-rose-400/5 px-3 py-2.5">
                                     <RadioGroupItem value="HIGH" id="severity-high" />
                                     <FieldLabel htmlFor="severity-high" className="font-normal">High</FieldLabel>
                                 </Field>
@@ -329,16 +329,11 @@ const HomePage = () => {
                             {errors.severity && <FieldError className="text-destructive text-sm mt-1">{errors.severity}</FieldError>}
                         </Field>
 
-                        <Button type='submit' className='text-xl! p-2 my-4'>Submit</Button>
+                        <Button type='submit' className='mt-2 h-12 w-full rounded-xl bg-emerald-300 text-base font-semibold text-emerald-950 hover:bg-emerald-200'>Submit report</Button>
                     </FieldSet>
                 </form>
-
-
-
-
-
-
-            </div >
+                </div>
+            </div>
         </LocationContext.Provider>)
 }
 

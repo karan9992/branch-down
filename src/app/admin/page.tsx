@@ -2,12 +2,14 @@
 
 import {
   AlertCircle,
+  ArrowLeft,
   CheckCircle2,
   Clock3,
   MapPin,
   MoreHorizontal,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -117,14 +119,15 @@ const AdminPage = () => {
   }
 
   return (
-    <main className="min-h-screen  px-4 py-8 text-neutral-100 sm:px-6 lg:px-8">
+    <main className="min-h-screen px-4 py-6 text-neutral-100 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto w-full max-w-7xl space-y-8">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 transition hover:text-emerald-200"><ArrowLeft className="size-4" /> Back to home</Link>
         <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-medium text-emerald-600">
               Operations dashboard
             </p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
               Incident reports
             </h1>
             <p className="mt-2 text-sm text-neutral-400">
@@ -155,7 +158,7 @@ const AdminPage = () => {
           />
         </section>
 
-        <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900 shadow-xl shadow-black/20">
+        <section className="overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/75 shadow-2xl shadow-black/20 backdrop-blur">
           <div className="flex items-center justify-between border-b border-neutral-800 px-5 py-4 sm:px-6">
             <div>
               <h2 className="font-semibold text-white">All reports</h2>
@@ -166,6 +169,7 @@ const AdminPage = () => {
             </div>
           </div>
 
+          <div className="overflow-x-auto">
           <Table className="min-w-[900px]">
             <TableHeader className="bg-neutral-800/70">
               <TableRow className="border-neutral-800 hover:bg-neutral-800/70">
@@ -304,6 +308,7 @@ const AdminPage = () => {
               )}
             </TableBody>
           </Table>
+          </div>
           <Pagination className="border-t border-neutral-800 px-5 py-4 sm:px-6">
             <PaginationContent>
               <PaginationItem>
@@ -358,7 +363,7 @@ const AdminPage = () => {
           </Pagination>
         </section>
 
-        <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900 p-2 shadow-xl shadow-black/20">
+        <section className="overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/75 p-2 shadow-2xl shadow-black/20 backdrop-blur">
           <ReportMap
             height="500px"
             reportData={reports}
@@ -388,7 +393,7 @@ function MetricCard({
   };
 
   return (
-    <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5 shadow-xl shadow-black/20">
+    <div className="rounded-2xl border border-white/10 bg-neutral-900/75 p-5 shadow-xl shadow-black/20 backdrop-blur">
       <div className="flex items-start justify-between">
         <p className="text-sm font-medium text-neutral-400">{label}</p>
         <span className={`rounded-lg p-2 ${tones[tone]}`}>{icon}</span>
