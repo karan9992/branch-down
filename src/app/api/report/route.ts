@@ -1,8 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
+import { SESSION_COOKIE, verifySession } from "@/lib/auth";
 import Report from "@/models/Report";
 
-export async function GET() {
+function requireAdmin(request: NextRequest) {
+  const session = verifySession(request.cookies.get(SESSION_COOKIE)?.value);
+  return session?.role === "ADMIN" ? session : null;
+}
+
+export async function GET(request: NextRequest) {
+  if (!requireAdmin(request)) {
+    return NextResponse.json({ message: "Authentication required." }, { status: 401 });
+  }
   await connectDB();
 
   const reports = await Report.find();
@@ -11,6 +20,9 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
+  if (!requireAdmin(req)) {
+    return NextResponse.json({ message: "Authentication required." }, { status: 401 });
+  }
   await connectDB();
 
   const { id, status } = await req.json();
@@ -39,6 +51,10 @@ export async function PATCH(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = verifySession(req.cookies.get(SESSION_COOKIE)?.value);
+    if (!session) {
+      return NextResponse.json({ success: false, message: "Please sign in to submit a report." }, { status: 401 });
+    }
     await connectDB();
 
     const {
@@ -81,6 +97,7 @@ export async function POST(req: NextRequest) {
         severity,
         images,
         location,
+        reportedBy: session.userId,
       });
 
       return NextResponse.json(

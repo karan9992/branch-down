@@ -7,10 +7,13 @@ import {
   Clock3,
   MapPin,
   MoreHorizontal,
+  LogOut,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -64,6 +67,7 @@ const statusStyles: Record<IReport["status"], string> = {
 };
 
 const AdminPage = () => {
+  const router = useRouter();
   const [reports, setReports] = useState<IReport[]>([]);
   const [metrics, setMetrics] = useState<TMetric>({
     total: 0,
@@ -77,13 +81,25 @@ const AdminPage = () => {
 
   useEffect(() => {
     fetch("/api/report")
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (res.status === 401) {
+          router.replace("/login?next=/admin");
+          return [];
+        }
+        return res.json();
+      })
       .then((data) => {
         setReports(data);
         setCurrentPage(1);
       })
       .catch((err) => console.log("error:", err));
-  }, []);
+  }, [router]);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    toast.success("Signed out successfully.");
+    router.replace("/login");
+  };
 
   useEffect(() => {
     const pending = reports.filter(
@@ -134,7 +150,7 @@ const AdminPage = () => {
               Review and manage incoming fallen-tree reports.
             </p>
           </div>
-          <p className="text-sm text-neutral-400">Live report overview</p>
+          <button type="button" onClick={handleLogout} className="inline-flex items-center gap-2 self-start rounded-lg border border-white/10 px-3 py-2 text-sm font-medium text-neutral-300 transition hover:bg-white/10 hover:text-white sm:self-auto"><LogOut className="size-4" /> Sign out</button>
         </header>
 
         <section className="grid gap-4 sm:grid-cols-3">

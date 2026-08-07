@@ -36,11 +36,11 @@ const ReportSchema = new Schema(
       default: "PENDING",
     },
 
-    // reportedBy: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "User",
-    //     required: true,
-    // },
+    reportedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     timestamps: true,
